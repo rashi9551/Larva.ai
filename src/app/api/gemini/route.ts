@@ -17,7 +17,7 @@ export async function GET(req: Request) {
   }
 
   const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
   const internalKeywords = 'concepts, subtopics, real-world examples, edge cases, best practices, misconceptions, diagrams (describe them), comparisons with similar topics';
 

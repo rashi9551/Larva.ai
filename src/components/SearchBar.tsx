@@ -1,7 +1,7 @@
 "use client"
 import type React from "react"
 import { useState, useRef, useEffect } from "react"
-import { SendHorizonal, Sparkles, Command } from "lucide-react"
+import { SendHorizonal, Command , Worm} from "lucide-react"
 
 const SearchBar = () => {
   const [query, setQuery] = useState("")
@@ -58,7 +58,7 @@ const SearchBar = () => {
             {/* AI Icon */}
             <div className="flex-shrink-0 mb-1">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                <Sparkles size={16} className="text-white" />
+                <Worm size={16} className="text-white" />
               </div>
             </div>
 

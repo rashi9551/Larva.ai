@@ -10,7 +10,7 @@ export const StarBackground = () => {
   const ref = useRef<THREE.Points>(null);
 
   const [sphere] = useState<Float32Array>(() => {
-    const buffer = new Float32Array(1000 * 3); // 3 components per point
+    const buffer = new Float32Array(1200 * 3); // 3 components per point
     random.inSphere(buffer, { radius: 1.2 });
     return buffer;
   });
@@ -45,7 +45,7 @@ export const StarBackground = () => {
   );
 };
 
-export const StarsCanvas = () => (
+const StarsCanvas = () => (
   <div className="fixed inset-0 w-full h-auto pointer-events-none">
     <Canvas camera={{ position: [0, 0, 1] }} gl={{ alpha: true }}>
       <Suspense fallback={null}>
@@ -54,3 +54,5 @@ export const StarsCanvas = () => (
     </Canvas>
   </div>
 );
+
+export default StarsCanvas;

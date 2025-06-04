@@ -34,10 +34,8 @@ const SearchBar = () => {
   }, [query])
 
   return (
-    <div className="w-full max-w-4xl mx-auto px-4">
-      {/* Main Search Container */}
+    <div className="w-full max-w-4xl px-1 md:px-4">
       <div className="relative">
-        {/* Gradient Background Blur */}
         <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
         {/* Search Bar */}
@@ -51,11 +49,9 @@ const SearchBar = () => {
   }
 `}
         >
-          {/* Top Gradient Line */}
           <div className="absolute top-0 left-4 right-4 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
 
           <div className="flex items-end gap-3 p-4">
-            {/* AI Icon */}
             <div className="flex-shrink-0 mb-1">
               <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
                 <Worm size={16} className="text-white" />
@@ -117,27 +113,6 @@ const SearchBar = () => {
           </div>
         </div>
 
-        {/* Floating Suggestions (Optional) */}
-        {!query && !isFocused && (
-          <div className="absolute top-full left-0 right-0 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <div className="flex flex-wrap gap-2 justify-center">
-              {[
-                "Explain quantum computing",
-                "Write a React component",
-                "Plan a marketing strategy",
-                "Debug this code",
-              ].map((suggestion, index) => (
-                <button
-                  key={index}
-                  onClick={() => setQuery(suggestion)}
-                  className="px-3 py-1.5 text-xs bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 rounded-full text-white/60 hover:text-white/80 transition-all duration-200"
-                >
-                  {suggestion}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
     </div>
   )

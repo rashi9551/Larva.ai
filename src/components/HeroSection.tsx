@@ -1,6 +1,5 @@
 "use client";
 import { motion } from "framer-motion";
-import HeroBackground from "./Others/HeroBackground";
 import React from "react";
 import SearchBar from "./SearchBar";
 import { HeroBackground1 } from "./Others/HeroBackground1";

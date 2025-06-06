@@ -34,7 +34,7 @@ const SearchBar = () => {
   }, [query])
 
   return (
-    <div className="w-full max-w-4xl px-1 md:px-4">
+    <div className="w-full max-w-4xl px-1 md:px-4 z-30">
       <div className="relative">
         <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 via-purple-500/10 to-pink-500/10 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 

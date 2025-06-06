@@ -14,7 +14,7 @@ const HeroContent = () => {
       initial="initial"
       animate="animate"
     >
-      <div className="absolute inset-0 z-0 opacity-80">
+      <div className="absolute inset-0 z-30 opacity-80">
         <StarsCanvas />
       </div>
       <div className="mt-10 flex flex-col items-center justify-center sm:mt-0">
@@ -44,7 +44,7 @@ const HeroContent = () => {
           <SearchBar />
         </div>
       </div>
-      <div className="absolute bottom-0 left-0 right-0 h-[100px] bg-gradient-to-t from-black/90 to-transparent z-20" />
+      <div className="absolute bottom-0 left-0 right-0 h-[900px] bg-gradient-to-t from-black/90 to-transparent -z-20" />
     </motion.section>
   );
 };

@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 import { useEventListener } from 'usehooks-ts';
-import HeroSection from "@/components/HeroSection";
 import PreLoader from "@/components/Others/PreLoader";
 import { useState, useEffect } from "react";
+import { Hero } from '@/components/Hero';
 
 export default function Home() {
   const [isMobile, setIsMobile] = useState(false);
@@ -23,8 +23,10 @@ export default function Home() {
   return (
     <>
       <PreLoader />
-      <main className="flex flex-col items-center justify-center bg-black">
-        <HeroSection />
+      <main className="h-full w-full">
+      <div className="flex flex-col gap-20">
+        <Hero/>
+        </div>
       </main>
     </>
   );

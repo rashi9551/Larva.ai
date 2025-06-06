@@ -21,7 +21,12 @@ export async function GET(req: Request) {
     );
   }
 
+<<<<<<< HEAD
   const ai = new GoogleGenAI({ apiKey });
+=======
+  const genAI = new GoogleGenerativeAI(apiKey);
+  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+>>>>>>> 8c51debc099bcd004b6cc39b02e83ce79b98158a
 
   const prompt =`Please provide detailed, structured notes covering the entire topic of ${topic} from start to finish. Include major concepts, important subtopics, definitions, explanations, and examples where applicable. Make the notes clear and organized for easy understanding and revision`;
 

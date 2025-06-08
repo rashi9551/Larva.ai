@@ -22,11 +22,8 @@ export async function GET(req: Request) {
   }
 
   const ai = new GoogleGenAI({ apiKey });
-  const genAI = new GoogleGenerativeAI(apiKey);
-  const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
 
-
-  const prompt =`Please provide detailed, structured notes covering the entire topic of ${topic} from start to finish. Include major concepts, important subtopics, definitions, explanations, and examples where applicable. Make the notes clear and organized for easy understanding and revision`;
+  const prompt = `Please provide detailed, structured notes covering the entire topic of ${topic} from start to finish. Include major concepts, important subtopics, definitions, explanations, and examples where applicable. Make the notes clear and organized for easy understanding and revision`;
 
   try {
     const result = await ai.models.generateContent({

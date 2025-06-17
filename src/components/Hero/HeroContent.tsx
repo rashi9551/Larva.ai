@@ -4,17 +4,17 @@ import { motion, AnimatePresence } from "framer-motion"
 import { useEffect, useState } from "react"
 import { Download, LogOut } from "lucide-react"
 import { useRouter } from "next/navigation"
-import SearchBar from "./SearchBar"
-import MarkdownRenderer from "./MarkdownRenderer"
-import ThinkingIndicator from "./ThinkingIndicator"
-import SmoothStreamingText from "./SmoothStreamingText"
-import { downloadAsPDF } from "../utils/pdfDownload"
+import SearchBar from "../SearchBar"
+import MarkdownRenderer from "../MarkdownRenderer"
+import ThinkingIndicator from "../ThinkingIndicator"
+import SmoothStreamingText from "../SmoothStreamingText"
+import { downloadAsPDF } from "../../utils/pdfDownload"
 import createClientForBrowser from "@/utils/supabase/client"
 import type { User as SupabaseUser } from "@supabase/supabase-js"
-import Profile from "../components/Profile"
+import Profile from "../../components/Profile"
 import { toast } from 'sonner';
 
-const StarsCanvas = dynamic(() => import("./Others/StarBackground"), { ssr: false, loading: () => null })
+const StarsCanvas = dynamic(() => import("../Others/StarBackground"), { ssr: false, loading: () => null })
 
 const HeroContent = () => {
   const supabase = createClientForBrowser()

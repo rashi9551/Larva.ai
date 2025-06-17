@@ -1,9 +1,9 @@
 "use client"
 import { useState, useActionState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { Mail, Apple, Worm, ChevronDown, Github, Loader2 } from "lucide-react"
+import { Mail, Apple, Worm, ChevronDown, Github, Loader2 } from 'lucide-react'
 import { useRouter } from "next/navigation"
-import { signupWithEmailPassword, signinWithGithub, signinWithGoogle } from "../action"
+import { signupWithEmailPassword, signinWithEmailPassword, signinWithGithub, signinWithGoogle } from "../action"
 import createClientForBrowser from "@/utils/supabase/client"
 import { toast } from "sonner"
 
@@ -24,11 +24,17 @@ const SignupPage = () => {
   }
 
   // Separate states for signup and signin
-  const [signupState, signupAction, signupPending] = useActionState(signupWithEmailPassword, {
-    success: null,
-    error: null,
-    message: undefined,
-  })
+  const [signupState, signupAction, signupPending] = useActionState(signupWithEmailPassword, initialState)
+  const [signinState, signinAction, signinPending] = useActionState(signinWithEmailPassword, initialState)
+
+  // Get current state based on mode
+  const currentState:{
+  success: string | boolean | null;
+  error: string | null;
+  message?: string | null | undefined;
+} = isSignup ? signupState : signinState
+  const currentAction = isSignup ? signupAction : signinAction
+  const currentPending = isSignup ? signupPending : signinPending
 
   // Check if user is already logged in
   useEffect(() => {
@@ -192,23 +198,23 @@ const SignupPage = () => {
           </motion.h1>
 
           {/* Success/Error Messages */}
-          {signupState?.message && (
+          {currentState?.message && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               className="mb-6 p-4 bg-green-500/20 border border-green-500/30 rounded-lg text-green-300 text-sm text-center"
             >
-              {signupState.message}
+              {currentState?.message}
             </motion.div>
           )}
 
-          {signupState?.error && (
+          {currentState?.error && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               className="mb-6 p-4 bg-red-500/20 border border-red-500/30 rounded-lg text-red-300 text-sm text-center"
             >
-              {signupState.error}
+              {currentState.error}
             </motion.div>
           )}
 
@@ -218,7 +224,7 @@ const SignupPage = () => {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4 }}
-              action={signupAction}
+              action={currentAction}
               className="space-y-4 mb-8"
             >
               {isSignup && (
@@ -253,10 +259,10 @@ const SignupPage = () => {
               </div>
               <button
                 type="submit"
-                disabled={signupPending}
+                disabled={currentPending}
                 className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {signupPending ? (
+                {currentPending ? (
                   <>
                     <Loader2 size={16} className="animate-spin" />
                     {isSignup ? "Creating Account..." : "Signing In..."}

@@ -2,7 +2,7 @@
 import { useEventListener } from 'usehooks-ts';
 import PreLoader from "@/components/Others/PreLoader";
 import { useState, useEffect } from "react";
-import { Hero } from '@/components/Hero';
+import { Hero } from '@/components/Hero/Hero';
 
 export default function Home() {
   const [isMobile, setIsMobile] = useState(false);

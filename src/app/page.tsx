@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 import { useEventListener } from 'usehooks-ts';
 import PreLoader from "@/components/Others/PreLoader";

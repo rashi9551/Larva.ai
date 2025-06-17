@@ -1,14 +1,14 @@
-"use client"
-import { motion } from "framer-motion"
-import { Square } from "lucide-react"
+"use client";
+import { motion } from "framer-motion";
+import { Square } from "lucide-react";
 
 interface StopButtonProps {
-  onStop: () => void
-  loading: boolean
+  onStop: () => void;
+  loading: boolean;
 }
 
 const StopButton = ({ onStop, loading }: StopButtonProps) => {
-  if (!loading) return null
+  if (!loading) return null;
 
   return (
     <motion.button
@@ -16,12 +16,18 @@ const StopButton = ({ onStop, loading }: StopButtonProps) => {
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.8 }}
       onClick={onStop}
-      className="flex items-center gap-2 px-4 py-2 bg-red-500/20 hover:bg-red-500/30 border border-red-500/40 hover:border-red-500/60 text-red-300 hover:text-red-200 rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 backdrop-blur-sm"
+      className="flex items-center gap-2 px-3 py-2
+             bg-red-500/20 hover:bg-red-500/30 border border-red-500/40 hover:border-red-500/60
+             text-red-300 hover:text-red-200 rounded-lg transition-all duration-200
+             hover:scale-105 active:scale-95 backdrop-blur-sm
+             justify-center w-8 h-8 md:w-auto md:h-auto" /* Adjusted for mobile size */
     >
       <Square size={14} className="fill-current" />
-      <span className="text-sm font-medium">Stop generating</span>
+      <span className="hidden md:inline text-sm font-medium">
+        Stop generating
+      </span>
     </motion.button>
-  )
-}
+  );
+};
 
-export default StopButton
+export default StopButton;

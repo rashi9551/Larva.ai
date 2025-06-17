@@ -155,7 +155,15 @@ const SearchBar = ({ onNotesGenerated, onLoading, onError, onStop, loading,  }: 
                 onBlur={() => setIsFocused(false)}
                 disabled={loading}
                 rows={1}
-                className="relative z-10 w-full resize-none bg-transparent outline-none text-white placeholder-white/50 text-base leading-6 max-h-32 overflow-y-auto pointer-events-auto focus:text-white loading:opacity-50 loading:cursor-not-allowed"
+                className="
+                  relative z-10 w-full resize-none bg-transparent outline-none
+                  text-white placeholder-white/50
+                  text-base leading-6             /* Applies to all screens (mobile-first) */
+                  sm:text-lg sm:leading-7        /* Example: Slightly larger on small-medium screens */
+                  lg:text-xl lg:leading-8        /* Example: Even larger on large screens */
+                  max-h-32 overflow-y-auto pointer-events-auto focus:text-white
+                  loading:opacity-50 loading:cursor-not-allowed
+                "
                 style={{
                   minHeight: "24px",
                   border: "none",

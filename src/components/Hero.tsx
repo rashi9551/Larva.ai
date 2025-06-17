@@ -1,18 +1,17 @@
-import HeroContent from "./HeroContent";
-
+import HeroContent from "./HeroContent"
 
 export const Hero = () => {
   return (
-    <div className="relative flex flex-col h-full w-full">
+    <div className="relative w-full min-h-screen">
       <video
         autoPlay
         muted
         loop
-       className="rotate-180 absolute top-0 left-0 w-full h-full object-cover -z-20 transform -translate-y-[52.5vh]"
+        className="fixed top-0 left-0 w-full h-full object-cover -z-30 rotate-180 transform -translate-y-[52.5vh]"
       >
         <source src="/blackhole.webm" type="video/webm" />
       </video>
-      <HeroContent/>
+      <HeroContent />
     </div>
-  );
-};
+  )
+}

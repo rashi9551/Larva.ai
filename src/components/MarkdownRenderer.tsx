@@ -10,7 +10,6 @@ interface MarkdownRendererProps {
 }
 
 function stripMarkdownCodeBlock(content: string): string {
-  // Add safety check for undefined/null content
   if (!content || typeof content !== "string") {
     return ""
   }
@@ -24,13 +23,11 @@ function stripMarkdownCodeBlock(content: string): string {
 export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
-  const processedRef = useRef<boolean>(false)
 
   const [cleanContent, setCleanContent] = useState<string>("")
   const [sanitizedHtml, setSanitizedHtml] = useState<string>("")
 
   useEffect(() => {
-    // Add safety check for content
     if (!content || typeof content !== "string") {
       setCleanContent("")
       setSanitizedHtml("")
@@ -40,7 +37,6 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
     const cleaned = stripMarkdownCodeBlock(content)
     setCleanContent(cleaned)
 
-    // If no content after cleaning, show empty state
     if (!cleaned.trim()) {
       setSanitizedHtml("")
       return
@@ -49,6 +45,8 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
     marked.setOptions({
       breaks: true,
       gfm: true,
+      headerIds: false,
+      mangle: false,
     })
 
     const rawHtml = marked.parse(cleaned)
@@ -56,12 +54,19 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
     setSanitizedHtml(sanitized)
   }, [content])
 
-  useEffect(() => {
-    processedRef.current = false
-  }, [sanitizedHtml])
+  const copyToClipboard = async (text: string, index: number) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopiedIndex(index)
+      setTimeout(() => setCopiedIndex(null), 2000)
+    } catch (err) {
+      console.error("Failed to copy code", err)
+    }
+  }
 
   useEffect(() => {
-    if (containerRef.current && !processedRef.current && sanitizedHtml) {
+    if (containerRef.current && sanitizedHtml) {
+      // Remove existing enhanced code blocks
       const existingWrappers = containerRef.current.querySelectorAll(".code-block-wrapper")
       existingWrappers.forEach((wrapper) => {
         const pre = wrapper.querySelector("pre")
@@ -75,10 +80,10 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
 
       codeBlocks.forEach((block, index) => {
         const pre = block.parentElement as HTMLPreElement
-        if (pre) {
+        if (pre && !pre.closest(".code-block-wrapper")) {
           const wrapper = document.createElement("div")
           wrapper.className =
-            "code-block-wrapper relative my-4 border border-white/20 bg-black/40 backdrop-blur-sm rounded-lg overflow-hidden shadow-sm"
+            "code-block-wrapper relative my-4 border border-white/20 bg-black/60 backdrop-blur-sm rounded-lg overflow-hidden shadow-sm"
 
           const header = document.createElement("div")
           header.className = "flex items-center justify-between px-4 py-2 bg-white/5 border-b border-white/10"
@@ -92,7 +97,6 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
           const copyButton = document.createElement("button")
           copyButton.className =
             "copy-button flex items-center gap-2 px-3 py-1.5 text-sm text-white/60 hover:text-white hover:bg-white/10 rounded-md transition-colors border border-white/20"
-          copyButton.setAttribute("data-index", index.toString())
 
           const updateButton = (copied: boolean) => {
             if (copied) {
@@ -112,16 +116,19 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
             }
           }
 
-          updateButton(false)
+          updateButton(copiedIndex === index)
 
-          copyButton.onclick = () => {
+          // Add fresh event listener each time
+          copyButton.onclick = (e) => {
+            e.preventDefault()
             copyToClipboard(block.textContent || "", index)
           }
 
           header.appendChild(languageSpan)
           header.appendChild(copyButton)
 
-          pre.className = "p-4 overflow-x-auto text-sm bg-[#0a0a0a] text-gray-100 font-mono rounded-none m-0"
+          pre.className =
+            "p-4 overflow-x-auto text-sm bg-[#0a0a0a] text-gray-100 font-mono rounded-none m-0 leading-relaxed"
 
           const parent = pre.parentNode
           if (parent) {
@@ -129,36 +136,10 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
             wrapper.appendChild(header)
             wrapper.appendChild(pre)
           }
-          ;(copyButton as any).updateButton = updateButton
-        }
-      })
-
-      processedRef.current = true
-    }
-  }, [sanitizedHtml])
-
-  useEffect(() => {
-    if (containerRef.current) {
-      const copyButtons = containerRef.current.querySelectorAll(".copy-button")
-      copyButtons.forEach((button) => {
-        const index = Number.parseInt(button.getAttribute("data-index") || "0")
-        const updateButton = (button as any).updateButton
-        if (updateButton) {
-          updateButton(copiedIndex === index)
         }
       })
     }
-  }, [copiedIndex])
-
-  const copyToClipboard = async (text: string, index: number) => {
-    try {
-      await navigator.clipboard.writeText(text)
-      setCopiedIndex(index)
-      setTimeout(() => setCopiedIndex(null), 2000)
-    } catch (err) {
-      console.error("Failed to copy code", err)
-    }
-  }
+  }, [sanitizedHtml, copiedIndex])
 
   return (
     <div
@@ -167,18 +148,20 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
       dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
       style={
         {
-          font: "Arial, sans-serif",
+          font: "system-ui, -apple-system, sans-serif",
           background: "transparent",
           padding: "0",
           borderRadius: "0",
+          lineHeight: "1.7",
           "--tw-prose-pre-bg": "#0a0a0a",
           "--tw-prose-pre-code": "#e5e7eb",
-          "--tw-prose-code": "#eab308",
+          "--tw-prose-code": "#fbbf24",
           "--tw-prose-headings": "#ffffff",
           "--tw-prose-body": "#e5e7eb",
           "--tw-prose-bold": "#ffffff",
           "--tw-prose-bullets": "#9ca3af",
           "--tw-prose-counters": "#9ca3af",
+          "--tw-prose-links": "#60a5fa",
         } as React.CSSProperties
       }
     />

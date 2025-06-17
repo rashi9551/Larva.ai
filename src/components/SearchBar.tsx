@@ -81,11 +81,11 @@ const SearchBar = ({ onNotesGenerated, onLoading, onError, loading, error }: Sea
         {/* Search Bar */}
         <div
           className={`
-            group relative bg-white/6 backdrop-blur-xl border transition-all duration-300 rounded-2xl pointer-events-auto
+            group relative bg-white/8 backdrop-blur-xl border transition-all duration-300 rounded-2xl pointer-events-auto shadow-2xl
             ${
               isFocused
-                ? "border-white/30 shadow-2xl shadow-blue-500/20 bg-white/10"
-                : "border-white/10 hover:border-white/20 hover:bg-white/8"
+                ? "border-white/30 shadow-blue-500/20 bg-white/12"
+                : "border-white/20 hover:border-white/30 hover:bg-white/10"
             }
           `}
         >

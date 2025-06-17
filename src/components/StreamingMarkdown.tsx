@@ -1,22 +1,25 @@
 "use client"
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
+import MarkdownRenderer from "./MarkdownRenderer"
 
-interface StreamingTextProps {
+interface StreamingMarkdownProps {
   content: string
   onComplete?: () => void
   speed?: number
 }
 
-const StreamingText = ({ content, onComplete, speed = 15 }: StreamingTextProps) => {
+const StreamingMarkdown = ({ content, onComplete, speed = 5 }: StreamingMarkdownProps) => {
   const [displayedContent, setDisplayedContent] = useState("")
   const [currentIndex, setCurrentIndex] = useState(0)
 
   useEffect(() => {
     if (currentIndex < content.length) {
       const timer = setTimeout(() => {
-        setDisplayedContent(content.slice(0, currentIndex + 1))
-        setCurrentIndex(currentIndex + 1)
+        // Stream multiple characters at once for faster display
+        const charsToAdd = Math.min(3, content.length - currentIndex)
+        setDisplayedContent(content.slice(0, currentIndex + charsToAdd))
+        setCurrentIndex(currentIndex + charsToAdd)
       }, speed)
 
       return () => clearTimeout(timer)
@@ -32,10 +35,10 @@ const StreamingText = ({ content, onComplete, speed = 15 }: StreamingTextProps) 
 
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative">
-      <span className="whitespace-pre-wrap">{displayedContent}</span>
+      <MarkdownRenderer content={displayedContent} />
       {currentIndex < content.length && (
-        <motion.span
-          className="inline-block w-0.5 h-5 bg-white/80 ml-1"
+        <motion.div
+          className="inline-block w-0.5 h-5 bg-white/80 ml-1 mt-2"
           animate={{ opacity: [1, 0] }}
           transition={{ duration: 0.8, repeat: Number.POSITIVE_INFINITY }}
         />
@@ -44,4 +47,4 @@ const StreamingText = ({ content, onComplete, speed = 15 }: StreamingTextProps) 
   )
 }
 
-export default StreamingText
+export default StreamingMarkdown

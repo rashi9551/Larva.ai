@@ -48,7 +48,6 @@ const HeroContent = () => {
         } = await supabase.auth.getUser();
 
         if (error) {
-          toast.error("Session expired, please login again");
           router.push("/signup");
           return;
         }

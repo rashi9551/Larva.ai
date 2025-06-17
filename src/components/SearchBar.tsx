@@ -15,32 +15,37 @@ interface SearchBarProps {
   onStop: () => void
   loading: boolean
   error: string | null
-  disabled: boolean
 }
 
-const SearchBar = ({ onNotesGenerated, onLoading, onError, onStop, loading, error, disabled }: SearchBarProps) => {
+const SearchBar = ({ onNotesGenerated, onLoading, onError, onStop, loading, error }: SearchBarProps) => {
   const [query, setQuery] = useState("")
   const [isFocused, setIsFocused] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const abortControllerRef = useRef<AbortController | null>(null)
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (!disabled) {
       setQuery(e.target.value)
-    }
-  }
-  useEffect(()=>{
-    console.log(loading,"=-=-=-");
     
-  },[loading])
+  }
+  useEffect(() => {
+    console.log("useffect ",loading);
+    if (loading) {
+      if (query.trim() ) {
+        generateNotes()
+      }
+    }else{
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort()
+      }
+      onStop()
+    }
+  }, [loading])
   
   
   const generateNotes = async () => {
-    onLoading(true)
-    console.log("=--=-=-=-===-");
-    console.log(loading);
+
     
-    if (!query.trim() || disabled) return
+    if (!query.trim()) return
 
     const currentQuery = query.trim()
     setQuery("") // Clear immediately for better UX
@@ -75,26 +80,14 @@ const SearchBar = ({ onNotesGenerated, onLoading, onError, onStop, loading, erro
       onError(err.response?.data?.error || err.message || "Failed to generate notes. Please try again.")
       setQuery(currentQuery) // Restore query on error
     } finally {
-      onLoading(false)
       abortControllerRef.current = null
     }
   }
 
-  const handleStop = () => {
-    if (abortControllerRef.current) {
-      abortControllerRef.current.abort()
-    }
-    onStop()
-  }
 
-  const handleSubmit = () => {
-    if (loading) {
-      // If loading, stop the generation
-      handleStop()
-    } else if (query.trim() && !disabled) {
-      // If not loading and has query, start generation
-      generateNotes()
-    }
+
+  const handleSubmit =() => {
+    onLoading(true)
   }
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -130,7 +123,7 @@ const SearchBar = ({ onNotesGenerated, onLoading, onError, onStop, loading, erro
                 ? "border-white/30 shadow-blue-500/20 bg-white/12"
                 : "border-white/20 hover:border-white/30 hover:bg-white/10"
             }
-            ${disabled ? "opacity-60" : ""}
+            ${loading ? "opacity-60" : ""}
           `}
         >
           <div className="absolute top-0 left-4 right-4 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
@@ -146,15 +139,15 @@ const SearchBar = ({ onNotesGenerated, onLoading, onError, onStop, loading, erro
             <div className="flex-1 min-w-0 relative">
               <textarea
                 ref={textareaRef}
-                placeholder={disabled ? "Please wait for the current response to complete..." : "Ask me anything..."}
+                placeholder={loading ? "Please wait for the current response to complete..." : "Ask me anything..."}
                 value={query}
                 onChange={handleChange}
                 onKeyDown={handleKeyDown}
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
-                disabled={disabled}
+                disabled={loading}
                 rows={1}
-                className="relative z-10 w-full resize-none bg-transparent outline-none text-white placeholder-white/50 text-base leading-6 max-h-32 overflow-y-auto pointer-events-auto focus:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                className="relative z-10 w-full resize-none bg-transparent outline-none text-white placeholder-white/50 text-base leading-6 max-h-32 overflow-y-auto pointer-events-auto focus:text-white loading:opacity-50 loading:cursor-not-allowed"
                 style={{
                   minHeight: "24px",
                   border: "none",
@@ -165,15 +158,16 @@ const SearchBar = ({ onNotesGenerated, onLoading, onError, onStop, loading, erro
 
             {/* Send/Stop Button - Inside SearchBar */}
             <div className="flex-shrink-0 mb-1">
-              <button
+              {loading ? <StopButton onStop={onStop} loading/> : 
+                <button
                 onClick={handleSubmit} // This is the only onClick needed
-                disabled={!loading && (!query.trim() || disabled)}
+                disabled={!loading && (!query.trim() || loading)}
                 className={`
                   w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200
                   ${
                     loading
                       ? "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
-                      : query.trim() && !disabled
+                      : query.trim() && !loading
                       ? "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
                       : "bg-white/10 text-white/40 cursor-not-allowed"
                   }
@@ -181,8 +175,10 @@ const SearchBar = ({ onNotesGenerated, onLoading, onError, onStop, loading, erro
                 title={loading ? "Stop generating" : "Send message"}
               >
                 {/* Just swap the icon directly */}
-                {loading ? <Square size={16} /> : <SendHorizonal size={16} />}
+                <SendHorizonal size={16} />
               </button>
+              }
+              
             </div>
           </div>
 

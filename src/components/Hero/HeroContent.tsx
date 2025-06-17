@@ -35,7 +35,6 @@ const HeroContent = () => {
   const [wasStopped, setWasStopped] = useState(false)
 
   // Disable input when loading or streaming
-  const isDisabled = loading || isStreaming
 
   useEffect(() => {
     async function getSupabaseUser() {
@@ -107,7 +106,7 @@ const HeroContent = () => {
 
   const handleLoading = (isLoading: boolean) => {
     console.log("loafin true aaki",isLoading,loading,"=-=-=-=-")
-    setLoading(!loading)
+    setLoading(isLoading)
     if (isLoading) {
       // Reset states when starting new request
       setHasContent(false)
@@ -121,8 +120,12 @@ const HeroContent = () => {
 
   const handleError = (errorMessage: string | null) => {
     // NO ERROR MESSAGES - just handle states
-    setLoading(false)
-    setIsStreaming(false)
+    if(errorMessage){
+      setIsStreaming(false)
+      setLoading(false)
+    }
+    console.log("error undey",errorMessage);
+    
     if (!wasStopped) {
       setStreamingComplete(false)
     }
@@ -369,7 +372,6 @@ const HeroContent = () => {
               onStop={handleStop}
               loading={loading}
               error={error}
-              disabled={isDisabled}
             />
           </div>
         </div>

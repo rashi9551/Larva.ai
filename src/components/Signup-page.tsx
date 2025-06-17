@@ -93,7 +93,6 @@ const SignupPage = () => {
     setIsSignup(!isSignup)
   }
 
-  // Show loading spinner while checking auth
   if (authLoading) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">

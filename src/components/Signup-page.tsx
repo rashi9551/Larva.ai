@@ -1,21 +1,72 @@
 "use client"
-import { useState, useActionState } from "react"
+import { useState, useActionState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { Mail, Apple, Worm, ChevronDown, Github, Loader2 } from "lucide-react"
+import { useRouter } from "next/navigation"
 import { signupWithEmailPassword, signinWithGithub, signinWithGoogle } from "../action"
+import createClientForBrowser from "@/utils/supabase/client"
+import { toast } from "sonner"
 
 const SignupPage = () => {
-  const [selectedService, setSelectedService] = useState("Larva AI")
+  const router = useRouter()
+  const supabase = createClientForBrowser()
+
   const [showEmailForm, setShowEmailForm] = useState(false)
   const [isSignup, setIsSignup] = useState(true)
   const [loading, setLoading] = useState<string | null>(null)
+  const [authLoading, setAuthLoading] = useState(true)
 
-  // Email form state
+  // Initial state
+  const initialState: { success: null; error: null; message: undefined } = {
+    success: null,
+    error: null,
+    message: undefined,
+  }
+
+  // Separate states for signup and signin
   const [signupState, signupAction, signupPending] = useActionState(signupWithEmailPassword, {
     success: null,
     error: null,
     message: undefined,
   })
+
+  // Check if user is already logged in
+  useEffect(() => {
+    async function checkAuthStatus() {
+      try {
+        const {
+          data: { user },
+          error,
+        } = await supabase.auth.getUser()
+
+        if (user && !error) {
+          // User is already logged in, redirect to home
+          toast.info('User already authenticated')
+          console.log("User already authenticated, redirecting to home...")
+          router.push("/")
+          return
+        }
+      } catch (err) {
+        console.error("Error checking auth status:", err)
+      } finally {
+        setAuthLoading(false)
+      }
+    }
+
+    checkAuthStatus()
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === "SIGNED_IN" && session?.user) {
+        // User just signed in, redirect to home
+        router.push("/")
+      }
+    })
+
+    return () => subscription.unsubscribe()
+  }, [supabase, router])
 
   const handleOAuthSignin = async (provider: "github" | "google") => {
     setLoading(provider)
@@ -33,6 +84,18 @@ const SignupPage = () => {
 
   const toggleAuthMode = () => {
     setIsSignup(!isSignup)
+  }
+
+  // Show loading spinner while checking auth
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-8 h-8 border-2 border-white/20 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-white/60">Loading...</p>
+        </div>
+      </div>
+    )
   }
 
   return (

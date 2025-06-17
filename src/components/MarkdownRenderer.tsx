@@ -10,6 +10,11 @@ interface MarkdownRendererProps {
 }
 
 function stripMarkdownCodeBlock(content: string): string {
+  // Add safety check for undefined/null content
+  if (!content || typeof content !== "string") {
+    return ""
+  }
+
   const cleaned = content.replace(/^[\u200B-\u200F\uFEFF]/g, "").trim()
   const tripleBacktickRegex = /^```(?:\w+)?\n([\s\S]*?)\n```$/
   const match = cleaned.match(tripleBacktickRegex)
@@ -21,39 +26,46 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
   const processedRef = useRef<boolean>(false)
 
-  const cleanContent = stripMarkdownCodeBlock(content)
-
-  marked.setOptions({
-    breaks: true,
-    gfm: true,
-  })
-
-  const rawHtml = marked.parse(cleanContent)
-  const sanitizedHtml = DOMPurify.sanitize(rawHtml)
-
-  const copyToClipboard = async (text: string, index: number) => {
-    try {
-      await navigator.clipboard.writeText(text)
-      setCopiedIndex(index)
-      setTimeout(() => setCopiedIndex(null), 2000)
-    } catch (err) {
-      console.error("Failed to copy code", err)
-    }
-  }
+  const [cleanContent, setCleanContent] = useState<string>("")
+  const [sanitizedHtml, setSanitizedHtml] = useState<string>("")
 
   useEffect(() => {
-    // Reset processed flag when content changes
+    // Add safety check for content
+    if (!content || typeof content !== "string") {
+      setCleanContent("")
+      setSanitizedHtml("")
+      return
+    }
+
+    const cleaned = stripMarkdownCodeBlock(content)
+    setCleanContent(cleaned)
+
+    // If no content after cleaning, show empty state
+    if (!cleaned.trim()) {
+      setSanitizedHtml("")
+      return
+    }
+
+    marked.setOptions({
+      breaks: true,
+      gfm: true,
+    })
+
+    const rawHtml = marked.parse(cleaned)
+    const sanitized = DOMPurify.sanitize(rawHtml)
+    setSanitizedHtml(sanitized)
+  }, [content])
+
+  useEffect(() => {
     processedRef.current = false
   }, [sanitizedHtml])
 
   useEffect(() => {
-    if (containerRef.current && !processedRef.current) {
-      // Clear any existing enhanced code blocks first
+    if (containerRef.current && !processedRef.current && sanitizedHtml) {
       const existingWrappers = containerRef.current.querySelectorAll(".code-block-wrapper")
       existingWrappers.forEach((wrapper) => {
         const pre = wrapper.querySelector("pre")
         if (pre && wrapper.parentNode) {
-          // Move pre back to its original position
           wrapper.parentNode.insertBefore(pre, wrapper)
           wrapper.remove()
         }
@@ -64,37 +76,31 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
       codeBlocks.forEach((block, index) => {
         const pre = block.parentElement as HTMLPreElement
         if (pre) {
-          // Create wrapper for the entire code block
           const wrapper = document.createElement("div")
           wrapper.className =
-            "code-block-wrapper relative my-4 border border-gray-200 bg-[#f7f7f8] dark:bg-[#1e1e20] dark:border-gray-700 rounded-lg overflow-hidden shadow-sm"
+            "code-block-wrapper relative my-4 border border-white/20 bg-black/40 backdrop-blur-sm rounded-lg overflow-hidden shadow-sm"
 
-          // Create header with language and copy button
           const header = document.createElement("div")
-          header.className =
-            "flex items-center justify-between px-4 py-2 bg-gray-100 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700"
+          header.className = "flex items-center justify-between px-4 py-2 bg-white/5 border-b border-white/10"
 
-          // Language label
           const languageSpan = document.createElement("span")
           const className = block.className || ""
           const language = className.replace("language-", "") || "text"
-          languageSpan.className = "text-sm font-medium text-gray-700 dark:text-gray-300 capitalize"
+          languageSpan.className = "text-sm font-medium text-white/70 capitalize"
           languageSpan.textContent = language
 
-          // Copy button
           const copyButton = document.createElement("button")
           copyButton.className =
-            "copy-button flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 rounded-md transition-colors border border-gray-300 dark:border-gray-600"
+            "copy-button flex items-center gap-2 px-3 py-1.5 text-sm text-white/60 hover:text-white hover:bg-white/10 rounded-md transition-colors border border-white/20"
           copyButton.setAttribute("data-index", index.toString())
 
-          // Create copy icon and text
           const updateButton = (copied: boolean) => {
             if (copied) {
               copyButton.innerHTML = `
-                <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                 </svg>
-                <span class="text-green-600">Copied!</span>
+                <span class="text-green-400">Copied!</span>
               `
             } else {
               copyButton.innerHTML = `
@@ -115,27 +121,22 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
           header.appendChild(languageSpan)
           header.appendChild(copyButton)
 
-          // Style the pre element
-          pre.className = "p-4 overflow-x-auto text-sm bg-[#171717] text-gray-100 font-mono rounded-none m-0"
+          pre.className = "p-4 overflow-x-auto text-sm bg-[#0a0a0a] text-gray-100 font-mono rounded-none m-0"
 
-          // Insert wrapper before pre
           const parent = pre.parentNode
           if (parent) {
             parent.insertBefore(wrapper, pre)
             wrapper.appendChild(header)
             wrapper.appendChild(pre)
           }
-          // Store update function for later use
           ;(copyButton as any).updateButton = updateButton
         }
       })
 
-      // Mark as processed
       processedRef.current = true
     }
   }, [sanitizedHtml])
 
-  // Update copy button states when copiedIndex changes
   useEffect(() => {
     if (containerRef.current) {
       const copyButtons = containerRef.current.querySelectorAll(".copy-button")
@@ -149,6 +150,16 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
     }
   }, [copiedIndex])
 
+  const copyToClipboard = async (text: string, index: number) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopiedIndex(index)
+      setTimeout(() => setCopiedIndex(null), 2000)
+    } catch (err) {
+      console.error("Failed to copy code", err)
+    }
+  }
+
   return (
     <div
       ref={containerRef}
@@ -157,10 +168,10 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
       style={
         {
           font: "Arial, sans-serif",
-          background: "#212121",
-          padding: "20px",
-          borderRadius: "10px",
-          "--tw-prose-pre-bg": "#1e1e20",
+          background: "transparent",
+          padding: "0",
+          borderRadius: "0",
+          "--tw-prose-pre-bg": "#0a0a0a",
           "--tw-prose-pre-code": "#e5e7eb",
           "--tw-prose-code": "#eab308",
           "--tw-prose-headings": "#ffffff",

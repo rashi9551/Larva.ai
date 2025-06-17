@@ -37,7 +37,6 @@ const SearchBar = ({ onNotesGenerated, onLoading, onError, onStop, loading, erro
       if (abortControllerRef.current) {
         abortControllerRef.current.abort()
       }
-      onStop()
     }
   }, [loading])
   

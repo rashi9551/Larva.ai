@@ -5,6 +5,7 @@ import { SendHorizonal, Command, Worm, Square } from "lucide-react"
 import { AnimatePresence } from "framer-motion"
 import axios from "axios"
 import SearchBarThinking from "./SearchBarThinking"
+import StopButton from "./StopButton"
 
 
 interface SearchBarProps {
@@ -28,13 +29,21 @@ const SearchBar = ({ onNotesGenerated, onLoading, onError, onStop, loading, erro
       setQuery(e.target.value)
     }
   }
-
+  useEffect(()=>{
+    console.log(loading,"=-=-=-");
+    
+  },[loading])
+  
+  
   const generateNotes = async () => {
+    onLoading(true)
+    console.log("=--=-=-=-===-");
+    console.log(loading);
+    
     if (!query.trim() || disabled) return
 
     const currentQuery = query.trim()
     setQuery("") // Clear immediately for better UX
-    onLoading(true)
     onError(null)
 
     // Create abort controller for this request
@@ -157,7 +166,7 @@ const SearchBar = ({ onNotesGenerated, onLoading, onError, onStop, loading, erro
             {/* Send/Stop Button - Inside SearchBar */}
             <div className="flex-shrink-0 mb-1">
               <button
-                onClick={handleSubmit}
+                onClick={handleSubmit} // This is the only onClick needed
                 disabled={!loading && (!query.trim() || disabled)}
                 className={`
                   w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200
@@ -165,13 +174,14 @@ const SearchBar = ({ onNotesGenerated, onLoading, onError, onStop, loading, erro
                     loading
                       ? "bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
                       : query.trim() && !disabled
-                        ? "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
-                        : "bg-white/10 text-white/40 cursor-not-allowed"
+                      ? "bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
+                      : "bg-white/10 text-white/40 cursor-not-allowed"
                   }
                 `}
                 title={loading ? "Stop generating" : "Send message"}
               >
-                {loading ? <Square size={16} className="fill-current" /> : <SendHorizonal size={16} />}
+                {/* Just swap the icon directly */}
+                {loading ? <Square size={16} /> : <SendHorizonal size={16} />}
               </button>
             </div>
           </div>

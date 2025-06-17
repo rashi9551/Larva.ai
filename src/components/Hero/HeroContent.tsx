@@ -106,7 +106,8 @@ const HeroContent = () => {
   }
 
   const handleLoading = (isLoading: boolean) => {
-    setLoading(isLoading)
+    console.log("loafin true aaki",isLoading,loading,"=-=-=-=-")
+    setLoading(!loading)
     if (isLoading) {
       // Reset states when starting new request
       setHasContent(false)
@@ -143,6 +144,7 @@ const HeroContent = () => {
   const handleStreamingComplete = () => {
     setIsStreaming(false)
     setStreamingComplete(true)
+    setLoading(false) // ✅ ADD THIS LINE
   }
 
   const handleDownloadPDF = () => {
@@ -257,7 +259,7 @@ const HeroContent = () => {
             transition={{ duration: 0.8, ease: "easeOut" }}
           >
             <motion.h1
-              className="mb-8 text-center text-[28px] font-bold leading-[0.9em] tracking-tighter text-[#e4ded7] sm:text-[45px] md:text-[60px] lg:text-[80px]"
+              className="my-8 text-center text-[28px] font-bold leading-[0.9em] tracking-tighter text-[#e4ded7] sm:text-[45px] md:text-[60px] lg:text-[80px]"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
@@ -275,7 +277,8 @@ const HeroContent = () => {
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-[#e4ded7]">
                 assist
               </span>{" "}
-              {displayName}!
+                
+              {/* {displayName}! */}
             </motion.h1>
 
             {/* Welcome back message */}

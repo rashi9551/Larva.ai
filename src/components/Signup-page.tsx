@@ -67,7 +67,8 @@ const SignupPage = () => {
     } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === "SIGNED_IN" && session?.user) {
         // User just signed in, redirect to home
-        router.push("/")
+        // router.push("/")
+        router.back()
       }
     })
 

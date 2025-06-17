@@ -30,7 +30,7 @@ const HeroContent = () => {
   // App states
   const [notes, setNotes] = useState("")
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+  const [, setError] = useState<string | null>(null)
   const [hasContent, setHasContent] = useState(false)
   const [isStreaming, setIsStreaming] = useState(false)
   const [streamingComplete, setStreamingComplete] = useState(false)
@@ -150,6 +150,7 @@ const HeroContent = () => {
   }
 
   const handleStreamingComplete = () => {
+    // window.scrollTo({ top: 0, behavior: 'smooth' });
     setIsStreaming(false)
     setStreamingComplete(true)
     setLoading(false) // ✅ ADD THIS LINE
@@ -376,7 +377,6 @@ const HeroContent = () => {
               onError={handleError}
               onStop={handleStop}
               loading={loading}
-              error={error}
             />
           </div>
         </div>

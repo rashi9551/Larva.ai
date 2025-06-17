@@ -2,9 +2,13 @@
 import { createClientForServer } from '@/utils/supabase/server'
 import { Provider } from '@supabase/supabase-js'
 import { redirect } from 'next/navigation';
+interface SignupFormState {
+  success: string | boolean | null; // Changed to allow 'string' type
+  error: string | null;
+  message?: string;
+}
 
-
-const signInWith = (provider:Provider) => async (): Promise<{ success: string | null | boolean; error: string | Object ,email?:string}> => {
+const signInWith = (provider:Provider) => async (): Promise<{ success: string | null | boolean; error: string | object ,email?:string}> => {
   const supabase = await createClientForServer()
 
   const auth_callback_url = `${process.env.SITE_URL}/auth/callback`
@@ -36,12 +40,12 @@ const signOut = async () => {
 }
 
 const signupWithEmailPassword = async (
-  prev: any,
+  prev: SignupFormState,
   formData: FormData
 ): Promise<{ success: string | null | boolean; error: string | null ,message?:string}> => {
   const supabase = await createClientForServer();
 
-  const { data, error } = await supabase.auth.signUp({
+  const {  error } = await supabase.auth.signUp({
     email: formData.get('email') as string,
     password: formData.get('password') as string,
     options: {
@@ -65,10 +69,10 @@ const signupWithEmailPassword = async (
 };
 
 
-const signinWithEmailPassword = async  (prev: any, formData: FormData): Promise<{ success: null; error: string | null }> => {
+const signinWithEmailPassword = async  (prev: SignupFormState, formData: FormData): Promise<{ success: null; error: string | null }> => {
   const supabase = await createClientForServer();
 
-  const { data, error } = await supabase.auth.signInWithPassword({
+  const { error } = await supabase.auth.signInWithPassword({
     email: formData.get('email') as string,
     password: formData.get('password') as string,
   });

@@ -384,7 +384,7 @@ const SignupPage = () => {
       {/* Footer */}
       <footer className="relative z-10 p-6">
         <div className="text-center text-sm text-white/50">
-          <span>By continuing, you agree to Larva AI's </span>
+          <span>By continuing, you agree to Larva AI&apos;s </span>
           <button className="underline hover:text-white/70">Terms of Service</button>
           <span> and </span>
           <button className="underline hover:text-white/70">Privacy Policy</button>

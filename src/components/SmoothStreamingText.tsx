@@ -22,9 +22,11 @@ const SmoothStreamingText = ({ content, onComplete, speed = 8 }: SmoothStreaming
         setCurrentIndex(prev => prev + charsToAdd)
       }, speed)
       return () => clearTimeout(timer)
-    } else if (onComplete) {
+    } else {
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      onComplete()
+      if (onComplete) {
+        onComplete();
+      }
     }
   }, [currentIndex, content, speed, onComplete])
 

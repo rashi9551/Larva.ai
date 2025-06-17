@@ -6,8 +6,7 @@ export const downloadAsPDF = async (content: string, filename = "larva-ai-notes"
     marked.setOptions({
       breaks: true,
       gfm: true,
-      headerIds: false,
-      mangle: false,
+
     })
 
     // Convert markdown to HTML

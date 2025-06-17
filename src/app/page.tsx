@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { Hero } from '@/components/Hero/Hero';
 
 export default function Home() {
-  const [isMobile, setIsMobile] = useState(false);
+  const [, setIsMobile] = useState(false);
 
     useEffect(() => {
         window.scrollTo({

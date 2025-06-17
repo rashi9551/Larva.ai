@@ -1,9 +1,9 @@
 "use client"
 import type React from "react"
 import { useState, useRef, useEffect } from "react"
-import { SendHorizonal, Command, Worm, Square } from "lucide-react"
+import { SendHorizonal, Command, Worm } from "lucide-react"
 import { AnimatePresence } from "framer-motion"
-import axios from "axios"
+import axios, { AxiosError } from "axios"
 import SearchBarThinking from "./SearchBarThinking"
 import StopButton from "./StopButton"
 
@@ -14,10 +14,9 @@ interface SearchBarProps {
   onError: (error: string | null) => void
   onStop: () => void
   loading: boolean
-  error: string | null
 }
 
-const SearchBar = ({ onNotesGenerated, onLoading, onError, onStop, loading, error }: SearchBarProps) => {
+const SearchBar = ({ onNotesGenerated, onLoading, onError, onStop, loading,  }: SearchBarProps) => {
   const [query, setQuery] = useState("")
   const [isFocused, setIsFocused] = useState(false)
   const textareaRef = useRef<HTMLTextAreaElement>(null)
@@ -69,15 +68,25 @@ const SearchBar = ({ onNotesGenerated, onLoading, onError, onStop, loading, erro
         onError("No content was generated. Please try a different topic.")
         setQuery(currentQuery) // Restore query on error
       }
-    } catch (err: any) {
-      if (err.name === "AbortError" || err.code === "ERR_CANCELED") {
-        // Request was cancelled, don't show error - just restore query
-        setQuery(currentQuery)
-        return
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        if (err.code === AxiosError.ERR_CANCELED) {
+          // Request was cancelled, just restore query, don't show an error toast
+          setQuery(currentQuery);
+          return;
+        }
+        // Handle other Axios errors
+        onError(err.response?.data?.error || err.message || "Failed to generate notes. Please try again.");
+      } else if (err instanceof Error && err.name === "AbortError") {
+        // Handle native AbortController abort (if not an axios error)
+        setQuery(currentQuery);
+        return;
+      } else {
+        // Handle any other unexpected errors
+        console.error("Unknown error generating notes:", err);
+        onError("An unexpected error occurred. Please try again.");
       }
-      console.error("Error generating notes:", err)
-      onError(err.response?.data?.error || err.message || "Failed to generate notes. Please try again.")
-      setQuery(currentQuery) // Restore query on error
+      setQuery(currentQuery); 
     } finally {
       abortControllerRef.current = null
     }

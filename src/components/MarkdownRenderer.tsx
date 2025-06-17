@@ -24,7 +24,7 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
   const containerRef = useRef<HTMLDivElement>(null)
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null)
 
-  const [cleanContent, setCleanContent] = useState<string>("")
+  const [, setCleanContent] = useState<string>("")
   const [sanitizedHtml, setSanitizedHtml] = useState<string>("")
 
   useEffect(() => {
@@ -45,13 +45,14 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
     marked.setOptions({
       breaks: true,
       gfm: true,
-      headerIds: false,
-      mangle: false,
     })
-
-    const rawHtml = marked.parse(cleaned)
-    const sanitized = DOMPurify.sanitize(rawHtml)
-    setSanitizedHtml(sanitized)
+    const getRawHtml=async()=>{
+      const rawHtml = await marked.parse(cleaned)
+      const sanitized = DOMPurify.sanitize(rawHtml)
+      setSanitizedHtml(sanitized)
+      
+    }
+    getRawHtml()
   }, [content])
 
   const copyToClipboard = async (text: string, index: number) => {

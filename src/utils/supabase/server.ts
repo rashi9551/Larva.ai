@@ -1,5 +1,6 @@
 import { createServerClient } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+import type { SerializeOptions } from 'cookie'; // Import this type
 
 export async function createClientForServer() {
   const cookieStore = await cookies()
@@ -14,7 +15,11 @@ export async function createClientForServer() {
         getAll() {
           return cookieStore.getAll()
         },
-        setAll(cookiesToSet: { name: any; value: any; options: any }[]) {
+        setAll(cookiesToSet: Array<{
+            name: string;
+            value: string; // `value` should be a string
+            options: SerializeOptions; // `options` should be CookieSerializeOptions
+          }>) {
           try {
             cookiesToSet.forEach(({ name, value, options }) =>
               cookieStore.set(name, value, options),

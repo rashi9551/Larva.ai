@@ -25,6 +25,8 @@ const HeroContent = () => {
   const [authLoading, setAuthLoading] = useState(true)
   const [showUserMenu, setShowUserMenu] = useState(false)
 
+  
+
   // App states
   const [notes, setNotes] = useState("")
   const [loading, setLoading] = useState(false)
@@ -33,6 +35,9 @@ const HeroContent = () => {
   const [isStreaming, setIsStreaming] = useState(false)
   const [streamingComplete, setStreamingComplete] = useState(false)
   const [wasStopped, setWasStopped] = useState(false)
+
+
+
 
   // Disable input when loading or streaming
 

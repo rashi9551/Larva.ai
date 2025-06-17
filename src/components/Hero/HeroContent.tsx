@@ -12,7 +12,6 @@ import { downloadAsPDF } from "../../utils/pdfDownload";
 import createClientForBrowser from "@/utils/supabase/client";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import Profile from "../../components/Profile";
-import { toast } from "sonner";
 
 const StarsCanvas = dynamic(() => import("../Others/StarBackground"), {
   ssr: false,

@@ -27,7 +27,6 @@ const SearchBar = ({ onNotesGenerated, onLoading, onError, onStop, loading,  }: 
     
   }
   useEffect(() => {
-    console.log("useffect ",loading);
     if (loading) {
       if (query.trim() ) {
         generateNotes()

@@ -67,7 +67,6 @@ export default function MarkdownRenderer({ content }: MarkdownRendererProps) {
 
   useEffect(() => {
     if (containerRef.current && sanitizedHtml) {
-      // Remove existing enhanced code blocks
       const existingWrappers = containerRef.current.querySelectorAll(".code-block-wrapper")
       existingWrappers.forEach((wrapper) => {
         const pre = wrapper.querySelector("pre")

@@ -110,7 +110,6 @@ const HeroContent = () => {
   };
 
   const handleLoading = (isLoading: boolean) => {
-    console.log("loafin true aaki", isLoading, loading, "=-=-=-=-");
     setLoading(isLoading);
     if (isLoading) {
       // Reset states when starting new request
@@ -129,7 +128,6 @@ const HeroContent = () => {
       setIsStreaming(false);
       setLoading(false);
     }
-    console.log("error undey", errorMessage);
 
     if (!wasStopped) {
       setStreamingComplete(false);

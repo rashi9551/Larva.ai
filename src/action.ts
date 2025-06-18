@@ -11,7 +11,7 @@ interface SignupFormState {
 const signInWith = (provider:Provider) => async (): Promise<{ success: string | null | boolean; error: string | object ,email?:string}> => {
   const supabase = await createClientForServer()
 
-  const auth_callback_url = `https://larva-ai.netlify.app/auth/callback`
+  const auth_callback_url = process.env.SITE_URL
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider,
@@ -21,7 +21,6 @@ const signInWith = (provider:Provider) => async (): Promise<{ success: string | 
   })
 
   if (error) {
-    // console.log(error)
     return { success: null, error: { message: 'OAuth sign-in failed' } };
   }
 

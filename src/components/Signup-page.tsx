@@ -219,7 +219,7 @@ const SignupPage = () => {
           )}
 
           {/* Email Form */}
-          {showEmailForm && (
+           {showEmailForm && (
             <motion.form
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -259,7 +259,7 @@ const SignupPage = () => {
               </div>
               <button
                 type="submit"
-                disabled={currentPending}
+                disabled={currentPending || true} // Add '|| true' to always disable for "Coming Soon"
                 className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg font-medium hover:from-blue-600 hover:to-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {currentPending ? (
@@ -268,18 +268,16 @@ const SignupPage = () => {
                     {isSignup ? "Creating Account..." : "Signing In..."}
                   </>
                 ) : isSignup ? (
-                  "Create Account"
+                  "Create Account (Coming Soon)" // Changed text
                 ) : (
-                  "Sign In"
+                  "Sign In (Coming Soon)" // Changed text
                 )}
               </button>
-
               <div className="text-center">
                 <button type="button" onClick={toggleAuthMode} className="text-white/60 hover:text-white text-sm">
                   {isSignup ? "Already have an account? Sign in" : "Don't have an account? Sign up"}
                 </button>
               </div>
-
               <div className="text-center">
                 <button
                   type="button"
@@ -291,7 +289,6 @@ const SignupPage = () => {
               </div>
             </motion.form>
           )}
-
           {/* OAuth Login Options */}
           {!showEmailForm && (
             <motion.div
@@ -309,16 +306,15 @@ const SignupPage = () => {
                 {loading === "github" ? <Loader2 size={20} className="animate-spin" /> : <Github size={20} />}
                 {loading === "github" ? "Connecting..." : "Login with GitHub"}
               </button>
-
               {/* Login with Email */}
               <button
                 onClick={() => setShowEmailForm(true)}
-                className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-transparent border border-white/30 text-white rounded-full font-medium hover:bg-white/5 transition-colors"
+                disabled={true} // Add this to disable
+                className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-transparent border border-white/30 text-white rounded-full font-medium hover:bg-white/5 transition-colors opacity-50 cursor-not-allowed" // Add opacity and cursor styles
               >
                 <Mail size={20} />
-                Login with email
+                Login with email (Coming Soon) {/* Changed text */}
               </button>
-
               {/* Login with Google */}
               <button
                 onClick={() => handleOAuthSignin("google")}
@@ -349,7 +345,6 @@ const SignupPage = () => {
                 )}
                 {loading === "google" ? "Connecting..." : "Login with Google"}
               </button>
-
               {/* Login with Apple */}
               <button className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-transparent border border-white/30 text-white rounded-full font-medium hover:bg-white/5 transition-colors opacity-50 cursor-not-allowed">
                 <Apple size={20} />
@@ -357,7 +352,6 @@ const SignupPage = () => {
               </button>
             </motion.div>
           )}
-
           {/* Sign Up Link */}
           {!showEmailForm && (
             <motion.div
@@ -372,9 +366,10 @@ const SignupPage = () => {
                   setShowEmailForm(true)
                   setIsSignup(true)
                 }}
-                className="text-white hover:underline font-medium"
+                disabled={true} // Add this to disable
+                className="text-white hover:underline font-medium opacity-50 cursor-not-allowed" // Add opacity and cursor styles
               >
-                Create account
+                Create account (Coming Soon) {/* Changed text */}
               </button>
             </motion.div>
           )}

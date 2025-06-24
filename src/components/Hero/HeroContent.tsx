@@ -303,8 +303,7 @@ const HeroContent = () => {
   </span>{" "}
   - Here to{" "}
   <span className="text-transparent bg-clip-text bg-gradient-to-r from-purple-500 to-[#e4ded7]">
-    {/* assist */}
-    Fathima T
+    assist
   </span>{" "}
   {/* {displayName}! */}
 </motion.h1>
